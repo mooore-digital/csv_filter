@@ -8,8 +8,12 @@ import sys
 
 DELIMITER = ','
 
-class CsvFilter():
-    def __init__(self, file=None, deduplicate=False, filter=False, case_insensitive=False, verbose=False, delimiter=DELIMITER):
+
+class CsvFilter:
+    def __init__(
+            self, file=None, deduplicate=False, filter=None, case_insensitive=False, verbose=False,
+            delimiter=DELIMITER
+    ):
         self.file = file
         self.deduplicate = deduplicate
         self.filter = filter
@@ -94,17 +98,19 @@ class CsvFilter():
             for row in items:
                 writer.writerow(row)
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--file', '-f', help='File to filter')
     parser.add_argument('--deduplicate', help='Deduplication column to be applied', default=False)
     parser.add_argument('--filter', help='Filter to be applied', default=False)
-    parser.add_argument('--case_insensitive', '-i', action='store_true', help='Match values case insensitive', default=False)
+    parser.add_argument('--ignore_case', '-i', action='store_true', help='Match values case insensitive', default=False)
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose')
-    return parser.parse_args();
+    return parser.parse_args()
+
 
 def main():
-    args = parse_arguments();
+    args = parse_arguments()
     CsvFilter(
         file=args.file,
         deduplicate=args.deduplicate,
@@ -113,6 +119,7 @@ def main():
         verbose=args.verbose
     ).apply()
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())
