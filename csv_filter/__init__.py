@@ -14,15 +14,15 @@ class CsvFilter:
             self, 
             file=None, 
             deduplicate=False, 
-            filter=None, 
+            filter_query=None,
             filter_inverse=False,
-            ignore_case=False, 
+            ignore_case=False,
             verbose=False,
             delimiter=DELIMITER
     ):
         self.file = file
         self.deduplicate = deduplicate
-        self.filter = filter
+        self.filter = filter_query
         self.filter_inverse = filter_inverse
         self.ignore_case = ignore_case
         self.verbose = verbose
@@ -33,10 +33,10 @@ class CsvFilter:
 
     def apply(self):
         base_path = os.getcwd()
-        src_path = base_path + '/' + self.file
-        dest_path = src_path.replace('.csv', '.filtered.csv')
-        filtered_items = self.filter_items(src_path)
-        self.store_items(dest_path, filtered_items)
+        source_path = base_path + '/' + self.file
+        destination_path = source_path.replace('.csv', '.filtered.csv')
+        filtered_items = self.filter_items(source_path)
+        self.store_items(destination_path, filtered_items)
 
     def filter_items(self, file_path):
         result = []
@@ -103,8 +103,8 @@ class CsvFilter:
         if self.verbose:
             print('* Storing items to', file_path)
 
-        with open(file_path, 'wt') as csvfile:
-            writer = csv.writer(csvfile, delimiter=self.delimiter)
+        with open(file_path, 'wt') as csv_file:
+            writer = csv.writer(csv_file, delimiter=self.delimiter)
             for row in items:
                 writer.writerow(row)
 
@@ -125,7 +125,7 @@ def main():
     CsvFilter(
         file=args.file,
         deduplicate=args.deduplicate,
-        filter=args.filter,
+        filter_query=args.filter,
         filter_inverse=args.filter_inverse,
         ignore_case=args.ignore_case,
         verbose=args.verbose

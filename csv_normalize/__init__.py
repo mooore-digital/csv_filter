@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import csv
 import os
@@ -16,16 +16,16 @@ class CsvNormalize:
 
     def apply(self):
         base_path = os.getcwd()
-        src_path = base_path + '/' + self.file
-        dest_path = src_path.replace('.csv', '.normalized.csv')
-        normalized_items = self.normalize_items(src_path)
-        self.store_items(dest_path, normalized_items)
+        source_path = base_path + '/' + self.file
+        destination_path = source_path.replace('.csv', '.normalized.csv')
+        normalized_items = self.normalize_items(source_path)
+        self.store_items(destination_path, normalized_items)
 
     def normalize_items(self, file_path):
         result = []
         counter = 0
-        with open(file_path, 'rb') as csvfile:
-            reader = csv.reader(csvfile, delimiter=self.delimiter)
+        with open(file_path, 'rb') as csv_file:
+            reader = csv.reader(csv_file, delimiter=self.delimiter)
             for row in reader:
                 if counter == 0:
                     normalize_header_columns(row, self.verbose)
@@ -38,10 +38,10 @@ class CsvNormalize:
 
     def store_items(self, file_path, items):
         if self.verbose:
-            print '* Storing items to', file_path
+            print('* Storing items to', file_path)
 
-        with open(file_path, 'wb') as csvfile:
-            writer = csv.writer(csvfile, delimiter=self.delimiter)
+        with open(file_path, 'wb') as csv_file:
+            writer = csv.writer(csv_file, delimiter=self.delimiter)
             for row in items:
                 writer.writerow(row)
 
@@ -50,11 +50,11 @@ def normalize_header_columns(row, debug=False):
     for i in range(0, len(row)):
         column = row[i].decode('UTF-8')
         column = column.lower()
-        column = re.sub('[\W]', '_', column, flags=re.IGNORECASE | re.UNICODE)
-        column = re.sub('[_]{2,}', '_', column, flags=re.UNICODE)
+        column = re.sub(r'[\W]', '_', column, flags=re.IGNORECASE | re.UNICODE)
+        column = re.sub(r'[_]{2,}', '_', column, flags=re.UNICODE)
         column = column.strip('_')
         if debug:
-            print column, '\t', row[i]
+            print(column, '\t', row[i])
         row[i] = column.encode('UTF-8')
     return row
 
