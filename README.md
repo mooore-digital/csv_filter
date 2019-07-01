@@ -10,6 +10,7 @@ You can call the program this way:
 - **--file/-f**: Specify file to filter
 - **--deduplicate/-d** (optional): Specify deduplication column
 - **--filter** (optional): Specify filter column and regex pattern
+- **--filter_inverse** (optional): Inverse filter matches
 - **--ignore_case/-i** (optional): Enable case insensitivity
 - **--verbose/-v** (optional): Enable verbose output
 
