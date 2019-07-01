@@ -54,18 +54,21 @@ class CsvFilter:
         if self.verbose:
             print('* Filtering file', file_path)
 
-        with open(file_path, 'rt') as csvfile:
-            reader = csv.reader(csvfile, delimiter=self.delimiter)
-            for row in reader:
+        if self.filter:
+            filter_match = re.match('^(.+)=(.+)$', self.filter)
+            if filter_match:
+                filter_column = filter_match.group(1)
+                filter_pattern = filter_match.group(2)
+
+        with open(file_path, 'rt') as csv_file:
+            for row in csv.reader(csv_file, delimiter=self.delimiter):
                 if counter == 0:
                     if self.deduplicate:
                         deduplicate_column_index = row.index(self.deduplicate)
-                    if self.filter:
-                        filter_match = re.match('^(.+)=(.+)$', self.filter)
-                        if filter_match:
-                            filter_column = filter_match.group(1)
-                            filter_pattern = filter_match.group(2)
-                            filter_column_index = row.index(filter_column)
+
+                    if filter_column:
+                        filter_column_index = row.index(filter_column)
+
                     counter += 1
                     result.append(row)
                     continue
@@ -81,7 +84,7 @@ class CsvFilter:
                     else:
                         deduplicate_key_values.append(value)
 
-                if self.filter and filter_column_index:
+                if filter_column_index is not False:
                     value = row[filter_column_index]
                     if bool(re.match(filter_pattern, value, re_flags)) is not self.filter_inverse:
                         valid = True
