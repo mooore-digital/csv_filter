@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import csv
 import logging
@@ -45,9 +45,9 @@ class CsvFilter:
             re_flags = re.IGNORECASE
 
         if self.verbose:
-            print '* Filtering file', file_path
+            print('* Filtering file', file_path)
 
-        with open(file_path, 'rb') as csvfile:
+        with open(file_path, 'rt') as csvfile:
             reader = csv.reader(csvfile, delimiter=self.delimiter)
             for row in reader:
                 if counter == 0:
@@ -85,15 +85,15 @@ class CsvFilter:
                 counter += 1
 
         if self.verbose:
-            print '* Filtered', counter, 'items to', len(result)
+            print('* Filtered', counter, 'items to', len(result))
 
         return result
 
     def store_items(self, file_path, items):
         if self.verbose:
-            print '* Storing items to', file_path
+            print('* Storing items to', file_path)
 
-        with open(file_path, 'wb') as csvfile:
+        with open(file_path, 'wt') as csvfile:
             writer = csv.writer(csvfile, delimiter=self.delimiter)
             for row in items:
                 writer.writerow(row)
