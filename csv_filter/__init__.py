@@ -70,7 +70,7 @@ class CsvFilter:
                     result.append(row)
                     continue
 
-                valid = not self.filter_inverse
+                valid = False
 
                 if self.deduplicate and deduplicate_column_index is not False:
                     value = row[deduplicate_column_index]
@@ -83,8 +83,8 @@ class CsvFilter:
 
                 if self.filter and filter_column_index:
                     value = row[filter_column_index]
-                    if not re.match(filter_pattern, value, re_flags):
-                        valid = self.filter_inverse
+                    if bool(re.match(filter_pattern, value, re_flags)) is not self.filter_inverse:
+                        valid = True
 
                 if valid:
                     result.append(row)
