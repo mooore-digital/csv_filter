@@ -11,13 +11,20 @@ DELIMITER = ','
 
 class CsvFilter:
     def __init__(
-            self, file=None, deduplicate=False, filter=None, case_insensitive=False, verbose=False,
+            self, 
+            file=None, 
+            deduplicate=False, 
+            filter=None, 
+            filter_inverse=False,
+            ignore_case=False, 
+            verbose=False,
             delimiter=DELIMITER
     ):
         self.file = file
         self.deduplicate = deduplicate
         self.filter = filter
-        self.case_insensitive = case_insensitive
+        self.filter_inverse = filter_inverse
+        self.ignore_case = ignore_case
         self.verbose = verbose
         self.delimiter = delimiter
         self.logger = logging.getLogger('deduplicate')
@@ -41,7 +48,7 @@ class CsvFilter:
         counter = 0
         re_flags = 0
 
-        if self.case_insensitive:
+        if self.ignore_case:
             re_flags = re.IGNORECASE
 
         if self.verbose:
@@ -63,11 +70,11 @@ class CsvFilter:
                     result.append(row)
                     continue
 
-                valid = True
+                valid = not self.filter_inverse
 
                 if self.deduplicate and deduplicate_column_index is not False:
                     value = row[deduplicate_column_index]
-                    if self.case_insensitive:
+                    if self.ignore_case:
                         value = value.lower()
                     if value in deduplicate_key_values:
                         valid = False
@@ -77,7 +84,7 @@ class CsvFilter:
                 if self.filter and filter_column_index:
                     value = row[filter_column_index]
                     if not re.match(filter_pattern, value, re_flags):
-                        valid = False
+                        valid = self.filter_inverse
 
                 if valid:
                     result.append(row)
@@ -104,6 +111,7 @@ def parse_arguments():
     parser.add_argument('--file', '-f', help='File to filter')
     parser.add_argument('--deduplicate', help='Deduplication column to be applied', default=False)
     parser.add_argument('--filter', help='Filter to be applied', default=False)
+    parser.add_argument('--filter_inverse', action='store_true', help='Inverse filter matches', default=False)
     parser.add_argument('--ignore_case', '-i', action='store_true', help='Match values case insensitive', default=False)
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose')
     return parser.parse_args()
@@ -115,7 +123,8 @@ def main():
         file=args.file,
         deduplicate=args.deduplicate,
         filter=args.filter,
-        case_insensitive=args.case_insensitive,
+        filter_inverse=args.filter_inverse,
+        ignore_case=args.ignore_case,
         verbose=args.verbose
     ).apply()
     return 0
